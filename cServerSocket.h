@@ -13,7 +13,7 @@ using namespace std;
 class cServerSocket
 {
 private :
-	map<SOCKET*, cClntObj*> SocketMap;
+	map<SOCKET, cClntObj*> SocketMap;
 	WSADATA		wsaData;
 	SOCKET		s, clnt;
 	SOCKADDR_IN	addr, clnt_addr;
@@ -33,5 +33,6 @@ public :
 	bool bCheckBind(int _PortNum);
 	bool bCheckListen();
 	bool bCheckValidSocket(SOCKET* _sock);	
+	map<SOCKET, cClntObj*> _GetSocketMap();
 };
 

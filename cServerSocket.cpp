@@ -65,10 +65,10 @@ void cServerSocket::_SetSocketInfo()
 void cServerSocket::_EraseClntSocket(SOCKET * _sock)
 {
 	mtx.lock();						
-	cClntObj* _target = SocketMap.at(_sock);
-	SocketMap.erase(_sock);
+	cClntObj* _target = SocketMap.at(*_sock);
+	SocketMap.erase(*_sock);
 	closesocket(*_sock);
-	cout << "** Erase Socket " << endl;
+	cout << "\n** Erase Socket " << endl;
 	delete _target;
 	_target = nullptr;
 	mtx.unlock();
@@ -85,12 +85,14 @@ void cServerSocket::_AcceptClient(LPVOID lp)
 	
 	while (p->b_AcceptFlag)
 	{
+		clog << "\n\n========================================" << endl;
 		clog << "** _AcceptClient() running " << endl;
+		clog << "** Accepted clnt : " << p->SocketMap.size() << endl;
 		p->clnt = accept(p->s, (SOCKADDR*)&p->clnt_addr, &clnt_size);
 		if (p->bCheckValidSocket(&p->clnt))
 		{
-			p->SocketMap.insert({ &p->clnt, new cClntObj(lp, &p->clnt) });
-			p->SocketMap.at(&p->clnt)->__ClntInit__();
+			p->SocketMap.insert({ p->clnt, new cClntObj(lp, p->clnt) });
+			p->SocketMap.at(p->clnt)->__ClntInit__();
 		}
 
 		Sleep(1000);
@@ -152,7 +154,13 @@ bool cServerSocket::bCheckValidSocket(SOCKET * _sock)
 	if (*_sock == INVALID_SOCKET)
 	{
 		cout << "¡Ü _CheckValidSocket ¡æ INVALID_SOCKET error : " << WSAGetLastError() << endl;
+		WSACleanup();
 		return false;
 	}
 	return true;
+}
+
+map<SOCKET, cClntObj*> cServerSocket::_GetSocketMap()
+{
+	return SocketMap;
 }
