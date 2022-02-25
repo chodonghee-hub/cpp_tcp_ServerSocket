@@ -69,7 +69,7 @@ void cClntObj::_SendDataTo(LPVOID lp)
 		cout << "\n¡Ü Text your message : ";
 		cin >> p->cBuffer;
 	
-		if (strncmp(p->cBuffer, "exit", strlen(p->cBuffer)) == 0)
+		if (strncmp(p->cBuffer, "exit", strlen(p->cBuffer)+1) == 0)
 		{
 			cout << "[ Break Connection ]" << endl;
 			p->b_ClntObjFlag = false;
